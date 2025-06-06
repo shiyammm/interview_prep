@@ -6,6 +6,9 @@ import { fileURLToPath } from "url";
 import connectToDB from "./config/db.js";
 import authRoutes from "./routes/auth.route.js";
 import sessionRoutes from "./routes/session.route.js";
+import questionRoutes from "./routes/question.route.js";
+import protect from "./middlewares/authMiddleware.js";
+import { generateConceptExplanation, generateInterviewQuestions } from "./controllers/aiController.js";
 
 dotenv.config({ path: ".env.local" });
 
@@ -31,6 +34,10 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/sessions", sessionRoutes);
+app.use("/api/questions", questionRoutes);
+
+app.use("/api/ai/generate-questions", protect, generateInterviewQuestions);
+app.use("/api/ai/generate-explanation", protect, generateConceptExplanation);
 
 // Server Uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), {}));
