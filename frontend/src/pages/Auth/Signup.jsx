@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Input from "../../components/Inputs/Input";
 import ProfilePhotoSelector from "../../components/Inputs/ProfilePhotoSelector";
 import { validateEmail } from "../../utils/helper";
+import { UserContext } from "../../context/useContext";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
+import { API_PATHS } from "../../utils/apiPaths";
+import uploadImage from "../../utils/uploadImage";
 
 const Signup = ({ setCurrentPage }) => {
     const [profilePic, setProfilePic] = useState(null);
@@ -11,6 +16,8 @@ const Signup = ({ setCurrentPage }) => {
     const [email, setEmail] = useState("");
 
     const [error, setError] = useState("");
+    const { updateUser } = useContext(UserContext);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,7 +46,25 @@ const Signup = ({ setCurrentPage }) => {
         setError("");
 
         try {
-            //
+            if (profilePic) {
+                const imageUploadRes = await uploadImage(profilePic);
+                profileImageUrl = imageUploadRes.imageUrl || "";
+            }
+
+            const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+                name: fullName,
+                email,
+                password,
+                profileImageUrl
+            });
+
+            const { token } = response.data;
+
+            if (token) {
+                localStorage.setItem("token", token);
+                updateUser(response.data);
+                navigate("/dashboard");
+            }
         } catch (error) {
             const message =
                 error?.response?.data?.message ||
