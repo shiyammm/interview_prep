@@ -1,18 +1,27 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LuSparkles } from "react-icons/lu";
 import { appFeat } from "../utils/data";
 import Login from "./Auth/Login";
 import Signup from "./Auth/Signup";
 import Modal from "../components/Loader/Modal";
+import { UserContext } from "../context/useContext";
+import ProfileInfoCard from "../components/Cards/ProfileInfoCard";
 
 const LandingPage = () => {
+    const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
     const [openAuthModal, setOpenAuthModal] = useState(false);
     const [currentPage, setCurrentPage] = useState("login");
 
-    const handle = () => {};
+    const handleLanding = () => {
+        if (!user) {
+            setOpenAuthModal(true);
+        } else {
+            navigate("/dashboard");
+        }
+    };
     const onClose = () => {
         setOpenAuthModal(false);
         setCurrentPage("login");
@@ -28,12 +37,16 @@ const LandingPage = () => {
                         <div className="text-xl text-black font-bold">
                             Interview Pre AI
                         </div>
-                        <button
-                            className="bg-linear-to-r from-[#ff9324] to-[#e99a4b] text-sm font-semibold text-white px-7 py-2.5 rounded-full hover:bg-black hover:text-white border border-white transition-colors cursor-pointer"
-                            onClick={() => setOpenAuthModal(!openAuthModal)}
-                        >
-                            Login / Signup
-                        </button>
+                        {user ? (
+                            <ProfileInfoCard />
+                        ) : (
+                            <button
+                                className="bg-linear-to-r from-[#ff9324] to-[#e99a4b] text-sm font-semibold text-white px-7 py-2.5 rounded-full hover:bg-black hover:text-white border border-white transition-colors cursor-pointer"
+                                onClick={() => setOpenAuthModal(!openAuthModal)}
+                            >
+                                Login / Signup
+                            </button>
+                        )}
                     </header>
 
                     <div className="flex flex-col md:flex-row items-center">
@@ -61,7 +74,7 @@ const LandingPage = () => {
                             </p>
 
                             <button
-                                onClick={handle}
+                                onClick={handleLanding}
                                 className="bg-black text-sm font-semibold text-white px-7 py-2.5 rounded-full hover:bg-yellow-100 hover:text-black border border-yellow-50 hover:border-yellow-300 transition-colors cursor-pointer"
                             >
                                 Get Started

@@ -5,10 +5,11 @@ import Signup from "./pages/Auth/Signup";
 import InterviewPrep from "./pages/InterviewPrep/InterviewPrep";
 import Login from "./pages/Auth/Login";
 import { Toaster } from "react-hot-toast";
+import UserProvider from "./context/useContext";
 
 const App = () => {
     return (
-        <>
+        <UserProvider >
             <Router>
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
@@ -26,11 +27,11 @@ const App = () => {
                 toastOptions={{
                     className: "",
                     style: {
-                        fontSize: "13px",
-                    },
+                        fontSize: "13px"
+                    }
                 }}
             />
-        </>
+        </UserProvider>
     );
 };
 
