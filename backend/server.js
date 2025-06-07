@@ -23,15 +23,22 @@ const __dirname = path.dirname(__filename);
 await connectToDB();
 
 const allowedDomains = [
-    "http://localhost:3000",
-    "https://interview-prep-ym3y.vercel.app/"
+    "http://localhost:5173",
+    "https://interview-prep-ym3y.vercel.app"
 ];
 
 app.use(
     cors({
-        origin: allowedDomains,
+        origin: function (origin, callback) {
+            if (!origin || allowedDomains.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         methods: ["GET", "POST", "PUT", "DELETE"],
-        allowedHeaders: ["Content-Type", "Authorization"]
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true
     })
 );
 app.use(express.json());
