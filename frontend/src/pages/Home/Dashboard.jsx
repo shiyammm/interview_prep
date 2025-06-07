@@ -11,6 +11,8 @@ import CreateSessionForm from "./CreateSessionForm";
 import Modal from "../../components/Loader/Modal";
 import DeleteAlertContent from "../../components/Loader/DeleteAlertContent";
 import toast from "react-hot-toast";
+import { useContext } from "react";
+import { UserContext } from "../../context/useContext";
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -22,6 +24,7 @@ const Dashboard = () => {
         data: null
     });
 
+    const { user } = useContext(UserContext);
     const fetchAllSessions = async () => {
         try {
             const response = await axiosInstance.get(API_PATHS.SESSION.GET_ALL);
@@ -51,67 +54,71 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <DashboardLayout>
-            <div className="container mx-auto pt-4 pb-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-7 pt-1 pb-6 px-4 md:px-0">
-                    {sessions?.map((data, i) => (
-                        <SummaryCard
-                            key={data?._id}
-                            colors={CARD_BG[i % CARD_BG.length]}
-                            role={data?.role || ""}
-                            topicsToFocus={data?.topicsToFocus}
-                            experience={data?.experience || ""}
-                            questions={data?.questions?.length || ""}
-                            description={data?.description || ""}
-                            lastUpdated={
-                                data?.updatedAt
-                                    ? moment(data.updatedAt).format(
-                                          "Do MMM YYYY"
-                                      )
-                                    : ""
-                            }
-                            onSelect={() =>
-                                navigate(`/interview-prep/${data?._id}`)
-                            }
+        user && (
+            <DashboardLayout>
+                <div className="container mx-auto pt-4 pb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-7 pt-1 pb-6 px-4 md:px-0">
+                        {sessions?.map((data, i) => (
+                            <SummaryCard
+                                key={data?._id}
+                                colors={CARD_BG[i % CARD_BG.length]}
+                                role={data?.role || ""}
+                                topicsToFocus={data?.topicsToFocus}
+                                experience={data?.experience || ""}
+                                questions={data?.questions?.length || ""}
+                                description={data?.description || ""}
+                                lastUpdated={
+                                    data?.updatedAt
+                                        ? moment(data.updatedAt).format(
+                                              "Do MMM YYYY"
+                                          )
+                                        : ""
+                                }
+                                onSelect={() =>
+                                    navigate(`/interview-prep/${data?._id}`)
+                                }
+                                onDelete={() =>
+                                    setOpenDeleteAlert({ open: true, data })
+                                }
+                            />
+                        ))}
+                    </div>
+                    <button
+                        className="h-12 md:h-12 flex items-center justify-center gap-3 bg-linear-to-r from-[#ff9324] to-[#e99a4b] text-sm font-semibold text-white px-7 py-2.5 rounded-full hover:bg-black hover:text-white transition-colors cursor-pointer hover:shadow-orange-300 fixed bottom-10 md:bottom-20 right-10 md:right-20"
+                        onClick={() => setOpenCreateModal(true)}
+                    >
+                        <LuPlus className="text-2xl text-white" />
+                        Add New
+                    </button>
+                </div>
+                <Modal
+                    isOpen={openCreateModal}
+                    onClose={() => setOpenCreateModal(false)}
+                    hideHeader
+                >
+                    <div>
+                        <CreateSessionForm />
+                    </div>
+                </Modal>
+
+                <Modal
+                    isOpen={openDeleteAlert?.open}
+                    onClose={() => {
+                        setOpenDeleteAlert({ open: false, data: null });
+                    }}
+                    title="Delete Alert"
+                >
+                    <div className="w-[30vw]">
+                        <DeleteAlertContent
+                            content="Are you sure want to delete this session detail?"
                             onDelete={() =>
-                                setOpenDeleteAlert({ open: true, data })
+                                deleteSessions(openDeleteAlert.data)
                             }
                         />
-                    ))}
-                </div>
-                <button
-                    className="h-12 md:h-12 flex items-center justify-center gap-3 bg-linear-to-r from-[#ff9324] to-[#e99a4b] text-sm font-semibold text-white px-7 py-2.5 rounded-full hover:bg-black hover:text-white transition-colors cursor-pointer hover:shadow-orange-300 fixed bottom-10 md:bottom-20 right-10 md:right-20"
-                    onClick={() => setOpenCreateModal(true)}
-                >
-                    <LuPlus className="text-2xl text-white" />
-                    Add New
-                </button>
-            </div>
-            <Modal
-                isOpen={openCreateModal}
-                onClose={() => setOpenCreateModal(false)}
-                hideHeader
-            >
-                <div>
-                    <CreateSessionForm />
-                </div>
-            </Modal>
-
-            <Modal
-                isOpen={openDeleteAlert?.open}
-                onClose={() => {
-                    setOpenDeleteAlert({ open: false, data: null });
-                }}
-                title="Delete Alert"
-            >
-                <div className="w-[30vw]">
-                    <DeleteAlertContent
-                        content="Are you sure want to delete this session detail?"
-                        onDelete={() => deleteSessions(openDeleteAlert.data)}
-                    />
-                </div>
-            </Modal>
-        </DashboardLayout>
+                    </div>
+                </Modal>
+            </DashboardLayout>
+        )
     );
 };
 
