@@ -12,7 +12,6 @@ import {
     generateConceptExplanation,
     generateInterviewQuestions
 } from "./controllers/aiController.js";
-import cors from "cors";
 dotenv.config({ path: ".env.local" });
 
 const app = express();
