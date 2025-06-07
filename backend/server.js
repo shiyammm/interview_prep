@@ -8,8 +8,11 @@ import authRoutes from "./routes/auth.route.js";
 import sessionRoutes from "./routes/session.route.js";
 import questionRoutes from "./routes/question.route.js";
 import protect from "./middlewares/authMiddleware.js";
-import { generateConceptExplanation, generateInterviewQuestions } from "./controllers/aiController.js";
-
+import {
+    generateConceptExplanation,
+    generateInterviewQuestions
+} from "./controllers/aiController.js";
+import cors from "cors";
 dotenv.config({ path: ".env.local" });
 
 const app = express();
@@ -19,9 +22,14 @@ const __dirname = path.dirname(__filename);
 // Connect to DB
 await connectToDB();
 
+const allowedDomains = [
+    "http://localhost:3000",
+    "https://interview-prep-ym3y.vercel.app/"
+];
+
 app.use(
     cors({
-        origin: "*",
+        origin: allowedDomains,
         methods: ["GET", "POST", "PUT", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization"]
     })
