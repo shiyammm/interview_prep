@@ -49,8 +49,6 @@ const CreateSessionForm = () => {
                 }
             );
 
-            console.log(aiResponse);
-
             const generateQuestions = aiResponse.data;
 
             // Then post all the data with the question which are created by AI
