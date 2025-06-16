@@ -13,8 +13,9 @@ const generateToken = (userId) => {
 
 export const registerUser = async (req, res) => {
     try {
-        const { name, email, password, profileImageUrl } = req.body;
+        let userData = JSON.parse(req.body.userData);
 
+        const { name, email, password } = userData;
         if (!name || !email || !password) {
             return res
                 .status(400)
@@ -36,7 +37,7 @@ export const registerUser = async (req, res) => {
             name,
             email,
             password: hashedPass,
-            profileImageUrl
+            profileImageUrl: req.profileImageUrl
         });
 
         res.status(201).json({

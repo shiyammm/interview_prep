@@ -1,24 +1,20 @@
-import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/");
-    },
-    filename: (req, file, cb) => {
-        const newFileName = `${Date.now()}-${file.originalname}`;
-        cb(null, newFileName);
+const uploadMiddleware = async (req, res, next) => {
+    if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
     }
-});
 
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (allowedTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(new Error("Only .jpeg, .jpg and .png formats are allowed"), false);
-    }
+    const image = req.file;
+    const imageUrl = await cloudinary.uploader
+        .upload(image.path, {
+            resource_type: "image"
+        })
+        .then((result) => {
+            return result.secure_url;
+        });
+    req.profileImageUrl = imageUrl;
+    next();
 };
 
-const upload = multer({ storage, fileFilter });
-
-export default upload;
+export default uploadMiddleware;

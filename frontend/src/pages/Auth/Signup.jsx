@@ -6,7 +6,6 @@ import { UserContext } from "../../context/useContext";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
-import uploadImage from "../../utils/uploadImage";
 
 const Signup = ({ setCurrentPage }) => {
     const [profilePic, setProfilePic] = useState(null);
@@ -21,8 +20,6 @@ const Signup = ({ setCurrentPage }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        let profileImageUrl = "";
 
         if (!fullName.trim()) {
             setError("Please enter full name");
@@ -46,17 +43,25 @@ const Signup = ({ setCurrentPage }) => {
         setError("");
 
         try {
-            if (profilePic) {
-                const imageUploadRes = await uploadImage(profilePic);
-                profileImageUrl = imageUploadRes.imageUrl || "";
-            }
-
-            const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+            const userData = {
                 name: fullName,
                 email,
-                password,
-                profileImageUrl
-            });
+                password
+            };
+            const formData = new FormData();
+
+            formData.append("userData", JSON.stringify(userData));
+            formData.append("image", profilePic);
+
+            const response = await axiosInstance.post(
+                API_PATHS.AUTH.REGISTER,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }
+            );
 
             const { token } = response.data;
 

@@ -7,6 +7,7 @@ import Signup from "./Auth/Signup";
 import Modal from "../components/Loader/Modal";
 import { UserContext } from "../context/useContext";
 import ProfileInfoCard from "../components/Cards/ProfileInfoCard";
+import HeroImage from "../assets/image.png";
 
 const LandingPage = () => {
     const { user } = useContext(UserContext);
@@ -86,11 +87,11 @@ const LandingPage = () => {
 
             <div className="w-full min-h-full relative z-10">
                 <div>
-                    <div className="flex items-center justify-center -mt-36">
+                    <div className="flex items-center justify-center -mt-[7rem]">
                         <img
-                            src=""
+                            src={HeroImage}
                             alt="Hero Image"
-                            className="w-[88vw] rounded-lg"
+                            className="w-[88vw] rounded-2xl shadow-xl bg-white pt-[2rem] pr-[1.5rem] pb-[1rem]"
                         />
                     </div>
                 </div>

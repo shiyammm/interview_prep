@@ -131,7 +131,8 @@ const CreateSessionForm = () => {
                     className="w-full bg-black text-white cursor-pointer py-2.5 rounded-lg hover:bg-primary/30 hover:text-primary hover:border hover:border-primary hover:font-semibold flex justify-center gap-5 items-center"
                     disabled={isLoading}
                 >
-                    {isLoading && <SpinnerLoader />} Create Session
+                    {isLoading && <SpinnerLoader />}{" "}
+                    {isLoading ? "Creating Session" : "Create Session"}
                 </button>
             </form>
         </div>
