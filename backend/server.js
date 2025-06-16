@@ -12,6 +12,7 @@ import {
     generateConceptExplanation,
     generateInterviewQuestions
 } from "./controllers/aiController.js";
+import connectToCloudinary from "./config/cloudinary.js";
 
 dotenv.config({ path: ".env.local" });
 
@@ -21,6 +22,7 @@ const __dirname = path.dirname(__filename);
 
 // Connect to DB
 await connectToDB();
+await connectToCloudinary();
 
 const allowedDomains = [
     "http://localhost:5173",
